@@ -1,0 +1,16 @@
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'stavkaRacuna') DROP TABLE stavkaRacuna;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'racun') DROP TABLE racun;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'stavkaKorpe') DROP TABLE stavkaKorpe;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'proizvodSkladiste') DROP TABLE proizvodSkladiste;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'proizvodSlika') DROP TABLE proizvodSlika;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'slika') DROP TABLE slika;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'proizvod') DROP TABLE proizvod;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'proizvodInfo') DROP TABLE proizvodInfo;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'velicina') DROP TABLE velicina;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'korisnik') DROP TABLE korisnik;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'proizvodjac') DROP TABLE proizvodjac;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'kategorija') DROP TABLE kategorija;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'kolekcija') DROP TABLE kolekcija;
+IF EXISTS (SELECT * FROM sys.tables WHERE name like 'skladiste') DROP TABLE skladiste;
+IF OBJECT_ID('PrviTriger', 'TR') IS NOT NULL DROP TRIGGER PrviTriger;
+IF OBJECT_ID('DrugiTriger', 'TR') IS NOT NULL DROP TRIGGER DrugiTriger;
