@@ -38,6 +38,11 @@ namespace ERP_backend.Repositories
             return context.Racuni.FirstOrDefault(e => e.IDRacun == racunID);
         }
 
+        public List<RacunEntity> GetRacunEntitiesByUser(int userID)
+        {
+            return context.Racuni.Where(e => e.IDKupac == userID).ToList();
+        }
+
         public bool SaveChanges()
         {
             return context.SaveChanges() > 0;

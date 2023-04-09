@@ -10,17 +10,17 @@ namespace ERP_backend.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/infoi")]
+    [Route("api/slike")]
     [Produces("application/json", "application/xml")]
-    public class InfoController : ControllerBase
+    public class SlikaController : ControllerBase
     {
-        private readonly IInfoRepository infoRepository;
+        private readonly ISlikaRepository slikaRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public InfoController(IInfoRepository infoRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public SlikaController(ISlikaRepository slikaRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
-            this.infoRepository = infoRepository;
+            this.slikaRepository = slikaRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
         }
@@ -28,18 +28,19 @@ namespace ERP_backend.Controllers
         [AllowAnonymous]
         [HttpHead]
         [HttpGet]
-        public ActionResult<List<InfoDTO>> GetAllInfos()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<SlikaDTO>> GetAllSlike()
         {
             try
             {
-                List<InfoEntity> infos = infoRepository.GetAllInfo();
+                List<SlikaEntity> slike = slikaRepository.GetAllSlike();
 
-                if (infos == null || infos.Count == 0)
+                if (slike == null || slike.Count == 0)
                     return NoContent();
 
-                List<InfoDTO> infoDTO = mapper.Map<List<InfoDTO>>(infos);
+                List<SlikaDTO> slikeDTO = mapper.Map<List<SlikaDTO>>(slike);
 
-                return Ok(infoDTO);
+                return Ok(slikeDTO);
             }
             catch (Exception ex)
             {
@@ -48,19 +49,19 @@ namespace ERP_backend.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{infoID}")]
-        public ActionResult<InfoDTO> GetInfoByID(int infoID)
+        [HttpGet("{slikaID}")]
+        public ActionResult<SlikaDTO> GetSlikaByID(int slikaID)
         {
             try
             {
-                InfoEntity? info = infoRepository.GetInfoByID(infoID);
+                SlikaEntity? slika = slikaRepository.GetSlikaByID(slikaID);
 
-                if (info == null)
+                if (slika == null)
                     return NoContent();
 
-                InfoDTO infoDTO = mapper.Map<InfoDTO>(info);
+                SlikaDTO slikaDTO = mapper.Map<SlikaDTO>(slika);
 
-                return Ok(infoDTO);
+                return Ok(slikaDTO);
             }
             catch (Exception ex)
             {
@@ -70,24 +71,24 @@ namespace ERP_backend.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        public ActionResult<InfoDTO> CreateInfo(InfoCreateDTO infoCreateDTO)
+        public ActionResult<SlikaDTO> CreateSlika([FromBody] SlikaCreateDTO slikaCreateDTO)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    List<InfoEntity> infos = infoRepository.GetAllInfo();
-
-                    if (infos.Find(e => e.Naziv == infoCreateDTO.Naziv) == null)
+                    List<SlikaEntity> slike = slikaRepository.GetAllSlike();
+                    if (slike.Find(e => e.Naziv == slikaCreateDTO.Naziv) == null)
                     {
-                        InfoDTO infoDTO = infoRepository.CreateInfo(infoCreateDTO);
-                        infoRepository.SaveChanges();
+                        SlikaDTO slikaDTO = slikaRepository.CreateSlika(slikaCreateDTO);
+                        slikaRepository.SaveChanges();
 
-                        return Ok("Uspesno kreirana informacija!");
+                        return Ok("Uspesno kreirana slika!");
                     }
                     else
-                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji informacija sa istim nazivom.");
-
+                    {
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji slika sa istim nazivom!");
+                    }
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
@@ -98,19 +99,19 @@ namespace ERP_backend.Controllers
             }
         }
 
-        [HttpDelete("{infoID}")]
-        public IActionResult DeleteInfo(int infoID)
+        [HttpDelete("{slikaID}")]
+        public IActionResult DeleteSlika(int slikaId)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    InfoEntity? info = infoRepository.GetInfoByID(infoID);
-                    if (info == null)
+                    SlikaEntity? slika = slikaRepository.GetSlikaByID(slikaId);
+                    if (slika == null)
                         return NotFound();
 
-                    infoRepository.DeleteInfo(infoID);
-                    infoRepository.SaveChanges();
+                    slikaRepository.DeleteSlika(slikaId);
+                    slikaRepository.SaveChanges();
 
                     return NoContent();
                 }
@@ -125,25 +126,25 @@ namespace ERP_backend.Controllers
 
         [HttpPut]
         [Consumes("application/json")]
-        public ActionResult<InfoDTO> UpdateInfo([FromBody] InfoUpdateDTO infoUpdateDTO)
+        public ActionResult<SlikaDTO> UpdateSlika([FromBody] SlikaUpdateDTO slikaUpdateDTO)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    InfoEntity? oldInfo = infoRepository.GetInfoByID(infoUpdateDTO.IDInfo);
-                    if (oldInfo == null)
+                    SlikaEntity? oldSlika = slikaRepository.GetSlikaByID(slikaUpdateDTO.IDSlika);
+
+                    if (oldSlika == null)
                         return NotFound();
 
-                    InfoEntity info = mapper.Map<InfoEntity>(infoUpdateDTO);
-                    mapper.Map(info, oldInfo);
-                    infoRepository.SaveChanges();
+                    SlikaEntity slika = mapper.Map<SlikaEntity>(slikaUpdateDTO);
+                    mapper.Map(slika, oldSlika);
+                    slikaRepository.SaveChanges();
 
-                    return Ok(mapper.Map<InfoDTO>(info));
+                    return Ok(mapper.Map<SlikaDTO>(slika));
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
-
             }
             catch (Exception ex)
             {

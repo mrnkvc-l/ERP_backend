@@ -10,36 +10,33 @@ namespace ERP_backend.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/infoi")]
+    [Route("api/skladista")]
     [Produces("application/json", "application/xml")]
-    public class InfoController : ControllerBase
+    public class SkladisteController : ControllerBase
     {
-        private readonly IInfoRepository infoRepository;
+        private readonly ISkladisteRepository skladisteRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public InfoController(IInfoRepository infoRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public SkladisteController(ISkladisteRepository skladisteRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
-            this.infoRepository = infoRepository;
+            this.skladisteRepository = skladisteRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
         }
 
         [AllowAnonymous]
-        [HttpHead]
         [HttpGet]
-        public ActionResult<List<InfoDTO>> GetAllInfos()
+        public ActionResult<List<SkladisteDTO>> GetAllSkladista()
         {
             try
             {
-                List<InfoEntity> infos = infoRepository.GetAllInfo();
-
-                if (infos == null || infos.Count == 0)
+                List<SkladisteEntity> skladista = skladisteRepository.GetAllSkladista();
+                if(skladista == null)
                     return NoContent();
+                List<SkladisteDTO> skladistaDTO = mapper.Map<List<SkladisteDTO>>(skladista);
 
-                List<InfoDTO> infoDTO = mapper.Map<List<InfoDTO>>(infos);
-
-                return Ok(infoDTO);
+                return Ok(skladistaDTO);
             }
             catch (Exception ex)
             {
@@ -47,20 +44,21 @@ namespace ERP_backend.Controllers
             }
         }
 
+
         [AllowAnonymous]
-        [HttpGet("{infoID}")]
-        public ActionResult<InfoDTO> GetInfoByID(int infoID)
+        [HttpGet("{skladisteID}")]
+        public ActionResult<SkladisteDTO> GetSkladisteByID(int skladisteID)
         {
             try
             {
-                InfoEntity? info = infoRepository.GetInfoByID(infoID);
+                SkladisteEntity? skladiste = skladisteRepository.GetSkladisteByID(skladisteID);
 
-                if (info == null)
+                if (skladiste == null)
                     return NoContent();
 
-                InfoDTO infoDTO = mapper.Map<InfoDTO>(info);
+                SkladisteDTO skladisteDTO = mapper.Map<SkladisteDTO>(skladiste);
 
-                return Ok(infoDTO);
+                return Ok(skladisteDTO);
             }
             catch (Exception ex)
             {
@@ -70,24 +68,24 @@ namespace ERP_backend.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        public ActionResult<InfoDTO> CreateInfo(InfoCreateDTO infoCreateDTO)
+        public ActionResult<SkladisteDTO> CreateSkladiste([FromBody] SkladisteCreateDTO skladisteCreateDTO)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    List<InfoEntity> infos = infoRepository.GetAllInfo();
-
-                    if (infos.Find(e => e.Naziv == infoCreateDTO.Naziv) == null)
+                    List<SkladisteEntity> skladista = skladisteRepository.GetAllSkladista();
+                    if (skladista.Find(e => e.Naziv == skladisteCreateDTO.Naziv) == null)
                     {
-                        InfoDTO infoDTO = infoRepository.CreateInfo(infoCreateDTO);
-                        infoRepository.SaveChanges();
+                        SkladisteDTO skladisteDTO = skladisteRepository.CreateSkladiste(skladisteCreateDTO);
+                        skladisteRepository.SaveChanges();
 
-                        return Ok("Uspesno kreirana informacija!");
+                        return Ok("Uspesno kreirana skladiste!");
                     }
                     else
-                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji informacija sa istim nazivom.");
-
+                    {
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji skladiste sa istim nazivom!");
+                    }
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
@@ -98,19 +96,20 @@ namespace ERP_backend.Controllers
             }
         }
 
-        [HttpDelete("{infoID}")]
-        public IActionResult DeleteInfo(int infoID)
+
+        [HttpDelete("{skladisteID}")]
+        public IActionResult DeleteSkladiste(int skladisteId)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    InfoEntity? info = infoRepository.GetInfoByID(infoID);
-                    if (info == null)
+                    SkladisteEntity? skladiste = skladisteRepository.GetSkladisteByID(skladisteId);
+                    if (skladiste == null)
                         return NotFound();
 
-                    infoRepository.DeleteInfo(infoID);
-                    infoRepository.SaveChanges();
+                    skladisteRepository.DeleteSkladiste(skladisteId);
+                    skladisteRepository.SaveChanges();
 
                     return NoContent();
                 }
@@ -125,25 +124,25 @@ namespace ERP_backend.Controllers
 
         [HttpPut]
         [Consumes("application/json")]
-        public ActionResult<InfoDTO> UpdateInfo([FromBody] InfoUpdateDTO infoUpdateDTO)
+        public ActionResult<SkladisteDTO> UpdateSkladiste([FromBody] SkladisteUpdateDTO skladisteUpdateDTO)
         {
             try
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    InfoEntity? oldInfo = infoRepository.GetInfoByID(infoUpdateDTO.IDInfo);
-                    if (oldInfo == null)
+                    SkladisteEntity? oldSkladiste = skladisteRepository.GetSkladisteByID(skladisteUpdateDTO.IDSkladiste);
+
+                    if (oldSkladiste == null)
                         return NotFound();
 
-                    InfoEntity info = mapper.Map<InfoEntity>(infoUpdateDTO);
-                    mapper.Map(info, oldInfo);
-                    infoRepository.SaveChanges();
+                    SkladisteEntity skladiste = mapper.Map<SkladisteEntity>(skladisteUpdateDTO);
+                    mapper.Map(skladiste, oldSkladiste);
+                    skladisteRepository.SaveChanges();
 
-                    return Ok(mapper.Map<InfoDTO>(info));
+                    return Ok(mapper.Map<SkladisteDTO>(skladiste));
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
-
             }
             catch (Exception ex)
             {

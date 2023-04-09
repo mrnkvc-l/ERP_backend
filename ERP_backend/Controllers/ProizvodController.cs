@@ -191,7 +191,7 @@ namespace ERP_backend.Controllers
                         proizvod.Info = info;
                         proizvod.Velicina = velicina;
 
-                        return Ok("Proizvod uspesno kreiran!");
+                        return Ok(mapper.Map<ProizvodDTO>(proizvod));
                     }
                 }
                 else

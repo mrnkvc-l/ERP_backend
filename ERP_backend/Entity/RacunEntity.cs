@@ -10,10 +10,17 @@ namespace ERP_backend.Entity
         [Key]
         public int IDRacun { get; set; }
 
-        public int Kupac { get; set; }
+        [Required]
+        [ForeignKey("Kupac")]
+        public int IDKupac { get; set; }
 
+        [Required]
+        public KorisnikEntity Kupac { get; set; } = null!;
+
+        [Required]
         public double UkupnaCena { get; set; }
 
+        [Required]
         public DateTime Datum { get; set; }
     }
 }

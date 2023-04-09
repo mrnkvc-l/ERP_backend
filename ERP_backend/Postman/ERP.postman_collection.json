@@ -1,0 +1,528 @@
+{
+	"info": {
+		"_postman_id": "ba0f7365-2ac3-4137-b8a9-fb796c8d0f11",
+		"name": "ERP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25524120"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "USER ROLE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Username\": \"user1\",\r\n    \"Password\": \"lukacar12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/auth",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN ROLE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Username\": \"user2\",\r\n    \"Password\": \"blablablabla\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/auth",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Info",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/infoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"infoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/infoi/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"infoi",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlcjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTiIsImV4cCI6MTY4MTA4MTI0NywiaXNzIjoiRVJQMjAyMyIsImF1ZCI6IkVSUDIwMjMifQ.tamrYCKh4JsMKbblAb-Y_rhygej1C0Vr_0RDhL3oG0M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"naziv\": \"Slip on\",\r\n    \"opis\": \"Patike napravljene za ljude sa posebnim potrebama!\",\r\n    \"cena\": 5000.00\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/infoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"infoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idInfo\": 2,\r\n    \"naziv\": \"Slip on\",\r\n    \"opis\": \"Patike napravljene za ljude sa posebnim potrebama!\",\r\n    \"cena\": 5500.00\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/infoi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"infoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/infoi/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"infoi",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlcjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTiIsImV4cCI6MTY4MTA4MTQzMCwiaXNzIjoiRVJQMjAyMyIsImF1ZCI6IkVSUDIwMjMifQ.ZvzIBd6yp-gstiwvPPWgJosd-DqAqIZOmmYr6DUwBuM",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "kategorija",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/kategorije",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"kategorije"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/kategorije/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"kategorije",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlcjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTiIsImV4cCI6MTY4MTA5MDE5MCwiaXNzIjoiRVJQMjAyMyIsImF1ZCI6IkVSUDIwMjMifQ.5ZN05m4lqVO5NdDmcyl9-DSrofeV8jVgP1ohZvlA5fs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"naziv\": \"Patike za lako obuvanje\",\r\n    \"opis\": \"Obuca namenjena za ljude sa posebnim potrebama\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/kategorije",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"kategorije"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idKategorija\": 2,\r\n    \"naziv\": \"Patike za lako obuvanje\",\r\n    \"opis\": \"Obuca namenjena za sve ljude sa posebnim potrebama\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/kategorije",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"kategorije"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/kategorije/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"kategorije",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Proizvod",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/proizvodi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"proizvodi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/proizvodi/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"proizvodi",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"stanje\": true,\r\n    \"ukupnaKolicina\": 0,\r\n    \"IDProizvodInfo\": 1,\r\n    \"IDProizvodjac\": 1,\r\n    \"IDVelicina\": 1,\r\n    \"IDKategorija\": 1,\r\n    \"IDKolekcija\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/proizvodi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"proizvodi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"IDProizvod\": 2,\r\n    \"stanje\": true,\r\n    \"ukupnaKolicina\": 2,\r\n    \"IDProizvodInfo\": 1,\r\n    \"IDProizvodjac\": 1,\r\n    \"IDVelicina\": 1,\r\n    \"IDKategorija\": 1,\r\n    \"IDKolekcija\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5164/api/proizvodi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"proizvodi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5164/api/proizvodi/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5164",
+							"path": [
+								"api",
+								"proizvodi",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlcjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTiIsImV4cCI6MTY4MTA5MDE5MCwiaXNzIjoiRVJQMjAyMyIsImF1ZCI6IkVSUDIwMjMifQ.5ZN05m4lqVO5NdDmcyl9-DSrofeV8jVgP1ohZvlA5fs",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

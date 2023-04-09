@@ -9,6 +9,8 @@ namespace ERP_backend.Repositories
 
         RacunEntity? GetRacunByID(int racunID);
 
+        List<RacunEntity> GetRacunEntitiesByUser(int userID);
+
         RacunDTO CreateRacun(RacunCreateDTO racunCreateDTO);
 
         void DeleteRacun(int racunID);
