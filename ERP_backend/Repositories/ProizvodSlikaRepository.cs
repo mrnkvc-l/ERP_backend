@@ -16,22 +16,26 @@ namespace ERP_backend.Repositories
         }
         public ProizvodSlikaDTO CreateProizvodSlika(ProizvodSlikaCreateDTO proizvodSlikaCreateDTO)
         {
-            throw new NotImplementedException();
+            ProizvodSlikaEntity entity = mapper.Map<ProizvodSlikaEntity>(proizvodSlikaCreateDTO);
+            context.Add(entity);
+            return mapper.Map<ProizvodSlikaDTO>(entity);
         }
 
-        public void DeleteProizvodSlika(int proizvodSlikaID)
+        public void DeleteProizvodSlika(int proizvodID, int slikaID)
         {
-            throw new NotImplementedException();
+            ProizvodSlikaEntity? proizvodSlika = GetProizvodSlikaByID(proizvodID, slikaID);
+            if (proizvodSlika != null)
+                context.Remove(proizvodSlika);
         }
 
-        public List<ProizvodSlikaEntity> GetAllProizvodiSlike()
+        public List<ProizvodSlikaEntity> GetAllProizvodiSlike(int proizvodID)
         {
-            return context.ProizvodSlike.ToList();
+            return context.ProizvodSlike.Where(o => o.Proizvod == proizvodID).ToList();
         }
 
-        public ProizvodSlikaEntity? GetProizvodSlikaByID(int proizvodSlikaID)
+        public ProizvodSlikaEntity? GetProizvodSlikaByID(int proizvodID, int slikaID)
         {
-            throw new NotImplementedException();
+            return context.ProizvodSlike.FirstOrDefault(e => e.Proizvod == proizvodID || e.Slika == slikaID);
         }
 
         public bool SaveChanges()

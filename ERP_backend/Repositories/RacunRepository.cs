@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public RacunDTO CreateRacun(RacunCreateDTO racunCreateDTO)
         {
-            throw new NotImplementedException();
+            RacunEntity racun = mapper.Map<RacunEntity>(racunCreateDTO);
+            context.Add(racun);
+            return mapper.Map<RacunDTO>(racun);
         }
 
         public void DeleteRacun(int racunID)
         {
-            throw new NotImplementedException();
+            RacunEntity? racun = GetRacunByID(racunID);
+            if (racun != null)
+                context.Remove(racun);
         }
 
         public List<RacunEntity> GetAllRacuni()

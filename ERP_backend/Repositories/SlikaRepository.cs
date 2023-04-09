@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public SlikaDTO CreateSlika(SlikaCreateDTO slikaCreateDTO)
         {
-            throw new NotImplementedException();
+            SlikaEntity slika = mapper.Map<SlikaEntity>(slikaCreateDTO);
+            context.Add(slika);
+            return mapper.Map<SlikaDTO>(slika);
         }
 
         public void DeleteSlika(int slikaID)
         {
-            throw new NotImplementedException();
+            SlikaEntity? slika = GetSlikaByID(slikaID);
+            if (slika != null)
+                context.Remove(slika);
         }
 
         public List<SlikaEntity> GetAllSlike()

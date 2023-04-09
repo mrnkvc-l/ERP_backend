@@ -2,10 +2,13 @@
 using ERP_backend.Entity;
 using ERP_backend.Model;
 using ERP_backend.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERP_backend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/kategorije")]
     [Produces("application/json", "application/xml")]
@@ -22,6 +25,7 @@ namespace ERP_backend.Controllers
             this.mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpHead]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -38,12 +42,13 @@ namespace ERP_backend.Controllers
 
                 return Ok(kategorijeDTO);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("{kategorijaID}")]
         public ActionResult<KategorijaDTO> GetKategorijaByID(int kategorijaID)
         {
@@ -64,5 +69,87 @@ namespace ERP_backend.Controllers
             }
         }
 
+        [HttpPost]
+        [Consumes("application/json")]
+        public ActionResult<KategorijaDTO> CreateKategorija([FromBody] KategorijaCreateDTO kategorijaCreateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    List<KategorijaEntity> kategorije = kategorijaRepository.GetAllKategorije();
+                    if (kategorije.Find(e => e.Naziv == kategorijaCreateDTO.Naziv) == null)
+                    {
+                        KategorijaDTO kategorijaDTO = kategorijaRepository.CreateKategorija(kategorijaCreateDTO);
+                        kategorijaRepository.SaveChanges();
+
+                        return Ok("Uspesno kreirana kategorija!");
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji kategorija sa istim nazivom!");
+                    }
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpDelete("{kategorijaID}")]
+        public IActionResult DeleteKategorija(int kategorijaId)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    KategorijaEntity? kategorija = kategorijaRepository.GetKategorijaByID(kategorijaId);
+                    if (kategorija == null)
+                        return NotFound();
+
+                    kategorijaRepository.DeleteKategorija(kategorijaId);
+                    kategorijaRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        public ActionResult<KategorijaDTO> UpdateKategorija([FromBody] KategorijaUpdateDTO kategorijaUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    KategorijaEntity? oldKategorija = kategorijaRepository.GetKategorijaByID(kategorijaUpdateDTO.IDKategorija);
+
+                    if (oldKategorija == null)
+                        return NotFound();
+
+                    KategorijaEntity kategorija = mapper.Map<KategorijaEntity>(kategorijaUpdateDTO);
+                    mapper.Map(kategorija, oldKategorija);
+                    kategorijaRepository.SaveChanges();
+
+                    return Ok(mapper.Map<KategorijaDTO>(kategorija));
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

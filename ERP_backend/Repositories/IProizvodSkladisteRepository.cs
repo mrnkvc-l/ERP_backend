@@ -5,13 +5,13 @@ namespace ERP_backend.Repositories
 {
     public interface IProizvodSkladisteRepository
     {
-        List<ProizvodSkladisteEntity> GetAllProizvodiSkladista();
+        List<ProizvodSkladisteEntity> GetAllProizvodiSkladista(int proizvodID);
 
-        ProizvodSkladisteEntity? GetProizvodSkladisteByID(int proizvodSkladisteID);
+        ProizvodSkladisteEntity? GetProizvodSkladisteByID(int proizvodID, int skladisteID);
 
         ProizvodSkladisteDTO CreateProizvodSkladiste(ProizvodSkladisteCreateDTO proizvodSkladisteCreateDTO);
 
-        void DeleteProizvodSkladiste(int proizvodSkladisteID);
+        void DeleteProizvodSkladiste(int proizvodID, int skladisteID);
 
         bool SaveChanges();
     }

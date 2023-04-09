@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public ProizvodDTO CreateProizvod(ProizvodCreateDTO proizvodCreateDTO)
         {
-            throw new NotImplementedException();
+            ProizvodEntity proizvod = mapper.Map<ProizvodEntity>(proizvodCreateDTO);
+            context.Add(proizvod);
+            return mapper.Map<ProizvodDTO>(proizvod);
         }
 
         public void DeleteProizvod(int proizvodID)
         {
-            throw new NotImplementedException();
+            ProizvodEntity? proizvod = GetProizvodByID(proizvodID);
+            if(proizvod != null)
+                context.Remove(proizvod);
         }
 
         public List<ProizvodEntity> GetAllProizvodi()

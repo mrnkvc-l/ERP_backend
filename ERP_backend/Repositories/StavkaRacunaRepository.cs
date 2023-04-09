@@ -16,22 +16,26 @@ namespace ERP_backend.Repositories
         }
         public StavkaRacunaDTO CreateStavkaRacuna(StavkaRacunaCreateDTO stavkaRacunaCreateDTO)
         {
-            throw new NotImplementedException();
+            StavkaRacunaEntity stavkaRacuna = mapper.Map<StavkaRacunaEntity>(stavkaRacunaCreateDTO);
+            context.Add(stavkaRacuna);
+            return mapper.Map<StavkaRacunaDTO>(stavkaRacuna);
         }
 
-        public void DeleteStavkaRacuna(int stavkaRacunaID)
+        public void DeleteStavkaRacuna(int stavkaRacunaID, int racunID)
         {
-            throw new NotImplementedException();
+            StavkaRacunaEntity? stavkaRacuna = GetStavkaRacunaByID(stavkaRacunaID, racunID);
+            if(stavkaRacuna != null)
+                context.Remove(stavkaRacuna);
         }
 
         public List<StavkaRacunaEntity> GetAllStavkeRacuna(int racunID)
         {
-            throw new NotImplementedException();
+            return context.StavkeRacuna.Where(o => o.Racun ==racunID).ToList();
         }
 
-        public StavkaRacunaEntity? GetStavkaRacunaByID(int stavkaRacunaID)
+        public StavkaRacunaEntity? GetStavkaRacunaByID(int stavkaRacunaID, int racunID)
         {
-            throw new NotImplementedException();
+            return context.StavkeRacuna.FirstOrDefault(e => e.Racun == racunID || e.IDStavkaRacuna == stavkaRacunaID);
         }
 
         public bool SaveChanges()

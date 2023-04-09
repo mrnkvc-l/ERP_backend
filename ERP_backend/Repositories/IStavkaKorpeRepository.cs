@@ -7,11 +7,11 @@ namespace ERP_backend.Repositories
     {
         List<StavkaKorpeEntity> GetAllStavkeKorpe(int userID);
 
-        StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID);
+        StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID, int userID);
 
         StavkaKorpeDTO CreateStavkaKorpe(StavkaKorpeCreateDTO stavkaKorpeCreateDTO);
 
-        void DeleteStavkaKorpe(int stavkaKorpeID);
+        void DeleteStavkaKorpe(int stavkaKorpeID, int userID);
 
         bool SaveChanges();
     }

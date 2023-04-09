@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public InfoDTO CreateInfo(InfoCreateDTO infoCreateDTO)
         {
-            throw new NotImplementedException();
+            InfoEntity info = mapper.Map<InfoEntity>(infoCreateDTO);
+            context.Add(info);
+            return mapper.Map<InfoDTO>(info);
         }
 
         public void DeleteInfo(int infoID)
         {
-            throw new NotImplementedException();
+            InfoEntity? info = GetInfoByID(infoID);
+            if (info != null)
+                context.Remove(info);
         }
 
         public List<InfoEntity> GetAllInfo()

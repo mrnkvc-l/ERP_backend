@@ -17,12 +17,16 @@ namespace ERP_backend.Repositories
         }
         public KategorijaDTO CreateKategorija(KategorijaCreateDTO kategorijaCreateDTO)
         {
-            throw new NotImplementedException();
+            KategorijaEntity kategorija = mapper.Map<KategorijaEntity>(kategorijaCreateDTO);
+            context.Add(kategorija);
+            return mapper.Map<KategorijaDTO>(kategorija);
         }
 
         public void DeleteKategorija(int kategorijaID)
         {
-            throw new NotImplementedException();
+            KategorijaEntity? kategorija = GetKategorijaByID(kategorijaID);
+            if (kategorija != null)
+                context.Remove(kategorija);
         }
 
         public List<KategorijaEntity> GetAllKategorije()

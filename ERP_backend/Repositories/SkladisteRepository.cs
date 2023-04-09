@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public SkladisteDTO CreateSkladiste(SkladisteCreateDTO skladisteCreateDTO)
         {
-            throw new NotImplementedException();
+            SkladisteEntity skladiste = mapper.Map<SkladisteEntity>(skladisteCreateDTO);
+            context.Add(skladiste);
+            return mapper.Map<SkladisteDTO>(skladiste);
         }
 
         public void DeleteSkladiste(int skladisteID)
         {
-            throw new NotImplementedException();
+            SkladisteEntity? skladiste = GetSkladisteByID(skladisteID);
+            if(skladiste != null)
+                context.Remove(skladiste);
         }
 
         public List<SkladisteEntity> GetAllSkladista()

@@ -28,7 +28,7 @@ namespace ERP_backend.Model
         public string Password { get; set; } = null!;
 
         [Required(ErrorMessage = "So je neophodna!")]
-        public string Salt { get; set; } = null!;
+        public string So { get; set; } = null!;
 
         [Required(ErrorMessage = "Email je neophodan!")]
         [MaxLength(50, ErrorMessage = "Duzina mora biti do 50 karaktera!")]

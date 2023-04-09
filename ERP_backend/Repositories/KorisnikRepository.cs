@@ -16,12 +16,16 @@ namespace ERP_backend.Repositories
         }
         public KorisnikDTO CreateKorisnik(KorisnikCreateDTO korisnikCreateDTO)
         {
-            throw new NotImplementedException();
+            KorisnikEntity korisnik = mapper.Map<KorisnikEntity>(korisnikCreateDTO);
+            context.Add(korisnik);
+            return mapper.Map<KorisnikDTO>(korisnik);
         }
 
         public void DeleteKorisnik(int korisnikID)
         {
-            throw new NotImplementedException();
+            KorisnikEntity? korisnik = GetKorisnikByID(korisnikID);
+            if(korisnik != null)
+                context.Remove(korisnik);
         }
 
         public List<KorisnikEntity> GetAllKorisnici()

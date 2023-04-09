@@ -17,12 +17,16 @@ namespace ERP_backend.Repositories
 
         public KolekcijaDTO CreateKolekcija(KolekcijaCreateDTO kolekcijaCreateDTO)
         {
-            throw new NotImplementedException();
+            KolekcijaEntity kolekcija = mapper.Map<KolekcijaEntity>(kolekcijaCreateDTO);
+            context.Add(kolekcija);
+            return mapper.Map<KolekcijaDTO>(kolekcija);
         }
 
         public void DeleteKolekcija(int kolekcijaID)
         {
-            throw new NotImplementedException();
+            KolekcijaEntity? kolekcija = GetKolekcijaByID(kolekcijaID);
+            if(kolekcija != null)
+                context.Remove(kolekcija);
         }
 
         public List<KolekcijaEntity> GetAllKolekcije()

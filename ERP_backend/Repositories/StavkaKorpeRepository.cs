@@ -17,12 +17,16 @@ namespace ERP_backend.Repositories
 
         public StavkaKorpeDTO CreateStavkaKorpe(StavkaKorpeCreateDTO stavkaKorpeCreateDTO)
         {
-            throw new NotImplementedException();
+            StavkaKorpeEntity stavkaKorpe = mapper.Map<StavkaKorpeEntity>(stavkaKorpeCreateDTO);
+            context.Add(stavkaKorpe);
+            return mapper.Map<StavkaKorpeDTO>(stavkaKorpe);
         }
 
-        public void DeleteStavkaKorpe(int stavkaKorpeID)
+        public void DeleteStavkaKorpe(int stavkaKorpeID, int userID)
         {
-            throw new NotImplementedException();
+            StavkaKorpeEntity? stavkaKorpe = GetStavkaKorpeByID(stavkaKorpeID, userID);
+            if(stavkaKorpe != null)
+                context.Remove(stavkaKorpe);
         }
 
         public List<StavkaKorpeEntity> GetAllStavkeKorpe(int userID)
@@ -30,9 +34,9 @@ namespace ERP_backend.Repositories
             return context.StavkeKorpe.Where(o => o.Kupac == userID).ToList();
         }
 
-        public StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID)
+        public StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID, int userID)
         {
-            throw new NotImplementedException();
+            return context.StavkeKorpe.FirstOrDefault(e => e.Kupac == userID || e.Proizvod == stavkaKorpeID);
         }
 
         public bool SaveChanges()

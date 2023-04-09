@@ -22,9 +22,15 @@ namespace ERP_backend.Entity
         public string Username { get; set; } = null!;
 
         [Required]
+        [Column("sifra")]
         public string Password { get; set; } = null!;
 
         [Required]
+
+        public string So { get; set; } = null!;
+
+        [Required]
+        [Column("mail")]
         public string Email { get; set; } = null!;
 
         [Required]

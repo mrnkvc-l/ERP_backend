@@ -1,8 +1,11 @@
 using ERP_backend.Entity;
 using ERP_backend.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +30,25 @@ builder.Services.AddScoped<ISlikaRepository, SlikaRepository>();
 builder.Services.AddScoped<IStavkaKorpeRepository, StavkaKorpeRepository>();
 builder.Services.AddScoped<IStavkaRacunaRepository, StavkaRacunaRepository>();
 builder.Services.AddScoped<IVelicinaRepository, VelicinaRepository>();
-
+builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<ErpContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("erp") + ";Initial Catalog=erp"));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+    };
+});
 
 using (SqlConnection sqlConnection = new(builder.Configuration.GetConnectionString("erp")))
 {
@@ -97,6 +114,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

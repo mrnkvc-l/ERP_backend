@@ -14,6 +14,8 @@
 
         public string Password { get; set; } = null!;
 
+        public string So { get; set; } = null!;
+
         public string Email { get; set; } = null!;
 
         public string Adresa { get; set; } = null!;

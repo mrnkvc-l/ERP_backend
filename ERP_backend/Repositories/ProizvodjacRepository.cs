@@ -23,7 +23,9 @@ namespace ERP_backend.Repositories
 
         public void DeleteProizvodjac(int proizvodjacID)
         {
-            throw new NotImplementedException();
+            ProizvodjacEntity? proizvodjac = GetProizvodjacByID(proizvodjacID);
+            if(proizvodjac != null)
+                context.Remove(proizvodjac);
         }
 
         public List<ProizvodjacEntity> GetAllProizvodjaci()

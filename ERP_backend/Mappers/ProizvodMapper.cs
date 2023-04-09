@@ -13,8 +13,6 @@ namespace ERP_backend.Mappers
             CreateMap<ProizvodUpdateDTO, ProizvodEntity>();
             CreateMap<ProizvodDTO, ProizvodEntity>();
             CreateMap<ProizvodEntity, ProizvodEntity>();
-            CreateMap<ProizvodjacDTO, ProizvodEntity>();
-            CreateMap<ProizvodEntity, ProizvodjacDTO>();
         }
     }
 }

@@ -16,22 +16,26 @@ namespace ERP_backend.Repositories
         }
         public ProizvodSkladisteDTO CreateProizvodSkladiste(ProizvodSkladisteCreateDTO proizvodSkladisteCreateDTO)
         {
-            throw new NotImplementedException();
+            ProizvodSkladisteEntity entity = mapper.Map<ProizvodSkladisteEntity>(proizvodSkladisteCreateDTO);
+            context.Add(entity);
+            return mapper.Map<ProizvodSkladisteDTO>(entity);
         }
 
-        public void DeleteProizvodSkladiste(int proizvodSkladisteID)
+        public void DeleteProizvodSkladiste(int proizvodID, int skladisteID)
         {
-            throw new NotImplementedException();
+            ProizvodSkladisteEntity? proizvodSkladiste = GetProizvodSkladisteByID(proizvodID,skladisteID);
+            if (proizvodSkladiste != null)
+                context.Remove(proizvodSkladiste);
         }
 
-        public List<ProizvodSkladisteEntity> GetAllProizvodiSkladista()
+        public List<ProizvodSkladisteEntity> GetAllProizvodiSkladista(int proizvodID)
         {
-            return context.ProizvodSkladista.ToList();
+            return context.ProizvodSkladista.Where(o => o.Proizvod == proizvodID).ToList();
         }
 
-        public ProizvodSkladisteEntity? GetProizvodSkladisteByID(int proizvodSkladisteID)
+        public ProizvodSkladisteEntity? GetProizvodSkladisteByID(int proizvodID, int skladisteID)
         {
-            throw new NotImplementedException();
+            return context.ProizvodSkladista.FirstOrDefault(e => e.Proizvod == proizvodID || e.Skladiste == skladisteID);
         }
 
         public bool SaveChanges()
