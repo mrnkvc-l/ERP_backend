@@ -2,6 +2,7 @@
 using ERP_backend.Entity;
 using ERP_backend.Model;
 using ERP_backend.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -11,12 +12,14 @@ namespace ERP_backend.Controllers
     {
         private readonly IStavkaKorpeRepository stavkaKorpeRepository;
         private readonly IKorisnikRepository korisnikRepository;
+        private readonly IProizvodRepository proizvodRepository;
         private LinkGenerator linkGenerator;
         private IMapper mapper;
 
-        public StavkaKorpeController(IStavkaKorpeRepository stavkaKorpeRepository, IKorisnikRepository korisnikRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public StavkaKorpeController(IProizvodRepository proizvodRepository, IStavkaKorpeRepository stavkaKorpeRepository, IKorisnikRepository korisnikRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
             this.stavkaKorpeRepository = stavkaKorpeRepository;
+            this.proizvodRepository = proizvodRepository;
             this.korisnikRepository = korisnikRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
@@ -47,17 +50,34 @@ namespace ERP_backend.Controllers
             }
         }
 
+
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult<StavkaKorpeDTO> PostStavkaKorpe(StavkaKorpeCreateDTO stavkaKorpeCreateDTO)
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == stavkaKorpeCreateDTO.Kupac.ToString())
-                {
-                    return Ok();
-                }
+                stavkaKorpeCreateDTO.Kupac = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
+
+                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaKorpeCreateDTO.Proizvod);
+
+                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(stavkaKorpeCreateDTO.Kupac);
+
+                if (korisnik == null)
+                    return StatusCode(StatusCodes.Status403Forbidden, "Morate se prijaviti.");
+
+                if (proizvod == null)
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
                 else
-                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+                {
+                    StavkaKorpeDTO stavkaKorpeDTO = stavkaKorpeRepository.CreateStavkaKorpe(stavkaKorpeCreateDTO);
+                    stavkaKorpeRepository.SaveChanges();
+
+                    stavkaKorpeDTO.Kupac = mapper.Map<KorisnikDTO>(korisnik);
+                    stavkaKorpeDTO.Proizvod = mapper.Map<ProizvodDTO>(proizvod);
+
+                    return Ok("Uspesno kreirana stavka korpe!");
+                }
             }
             catch (Exception ex)
             {
