@@ -14,24 +14,24 @@ namespace ERP_backend.Controllers
     public class ProizvodController : ControllerBase
     {
         private readonly IProizvodRepository proizvodRepository;
-        private readonly IProizvodjacRepository proizvodjacRepository;
         private readonly IInfoRepository infoRepository;
+        private readonly IVelicinaRepository velicinaRepository;
         private readonly IKategorijaRepository kategorijaRepository;
         private readonly IKolekcijaRepository kolekcijaRepository;
-        private readonly IVelicinaRepository velicinaRepository;
+        private readonly IProizvodjacRepository proizvodjacRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public ProizvodController(IProizvodRepository proizvodRepository, IProizvodjacRepository proizvodjacRepository, IInfoRepository infoRepository, IKategorijaRepository kategorijaRepository, IKolekcijaRepository kolekcijaRepository, IVelicinaRepository velicinaRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public ProizvodController(IProizvodRepository proizvodRepository, IInfoRepository infoRepository,IVelicinaRepository velicinaRepository, LinkGenerator linkGenerator, IMapper mapper, IKategorijaRepository kategorijaRepository, IKolekcijaRepository kolekcijaRepository, IProizvodjacRepository proizvodjacRepository)
         {
             this.proizvodRepository = proizvodRepository;
-            this.proizvodjacRepository = proizvodjacRepository;
             this.infoRepository = infoRepository;
-            this.kategorijaRepository = kategorijaRepository;
-            this.kolekcijaRepository = kolekcijaRepository;
             this.velicinaRepository = velicinaRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
+            this.kategorijaRepository = kategorijaRepository;
+            this.kolekcijaRepository = kolekcijaRepository;
+            this.proizvodjacRepository = proizvodjacRepository;
         }
 
         [AllowAnonymous]
@@ -51,11 +51,12 @@ namespace ERP_backend.Controllers
                 {
                     ProizvodDTO proizvodDTO = mapper.Map<ProizvodDTO>(proizvod);
 
-                    proizvodDTO.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(proizvod.IDProizvodjac));
                     proizvodDTO.ProizvodInfo = mapper.Map<InfoDTO>(infoRepository.GetInfoByID(proizvod.IDProizvodInfo));
-                    proizvodDTO.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(proizvod.IDKategorija));
-                    proizvodDTO.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(proizvod.IDKolekcija));
                     proizvodDTO.Velicina = mapper.Map<VelicinaDTO>(velicinaRepository.GetVelicinaByID(proizvod.IDVelicina));
+
+                    proizvodDTO.ProizvodInfo.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(proizvod.Info.IDProizvodjac));
+                    proizvodDTO.ProizvodInfo.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(proizvod.Info.IDKategorija));
+                    proizvodDTO.ProizvodInfo.Kolekcija= mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(proizvod.Info.IDKolekcija));
 
                     proizvodiDTO.Add(proizvodDTO);
                 }
@@ -79,11 +80,12 @@ namespace ERP_backend.Controllers
 
                 ProizvodDTO proizvodDTO = mapper.Map<ProizvodDTO>(proizvod);
 
-                proizvodDTO.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(proizvod.IDProizvodjac));
                 proizvodDTO.ProizvodInfo = mapper.Map<InfoDTO>(infoRepository.GetInfoByID(proizvod.IDProizvodInfo));
-                proizvodDTO.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(proizvod.IDKategorija));
-                proizvodDTO.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(proizvod.IDKolekcija));
                 proizvodDTO.Velicina = mapper.Map<VelicinaDTO>(velicinaRepository.GetVelicinaByID(proizvod.IDVelicina));
+
+                proizvodDTO.ProizvodInfo.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(proizvod.Info.IDProizvodjac));
+                proizvodDTO.ProizvodInfo.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(proizvod.Info.IDKategorija));
+                proizvodDTO.ProizvodInfo.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(proizvod.Info.IDKolekcija));
 
                 return Ok(proizvodDTO);
             }
@@ -101,22 +103,16 @@ namespace ERP_backend.Controllers
             {
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    ProizvodjacEntity? proizvodjac = proizvodjacRepository.GetProizvodjacByID(proizvodCreateDTO.IDProizvodjac);
-                    KategorijaEntity? kategorija = kategorijaRepository.GetKategorijaByID(proizvodCreateDTO.IDKategorija);
-                    KolekcijaEntity? kolekcija = kolekcijaRepository.GetKolekcijaByID(proizvodCreateDTO.IDKolekcija);
                     InfoEntity? info = infoRepository.GetInfoByID(proizvodCreateDTO.IDProizvodInfo);
                     VelicinaEntity? velicina = velicinaRepository.GetVelicinaByID(proizvodCreateDTO.IDVelicina);
 
-                    if (proizvodjac == null || kategorija == null || kolekcija == null || info == null || velicina == null)
+                    if (info == null || velicina == null)
                         return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
                     else
                     {
                         ProizvodDTO proizvodDTO = proizvodRepository.CreateProizvod(proizvodCreateDTO);
                         proizvodRepository.SaveChanges();
 
-                        proizvodDTO.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjac);
-                        proizvodDTO.Kategorija = mapper.Map<KategorijaDTO>(kategorija);
-                        proizvodDTO.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcija);
                         proizvodDTO.ProizvodInfo = mapper.Map<InfoDTO>(info);
                         proizvodDTO.Velicina = mapper.Map<VelicinaDTO>(velicina);
 
@@ -171,13 +167,10 @@ namespace ERP_backend.Controllers
                     if (oldProizvod == null)
                         return NotFound();
 
-                    ProizvodjacEntity? proizvodjac = proizvodjacRepository.GetProizvodjacByID(proizvodUpdateDTO.IDProizvodjac);
-                    KategorijaEntity? kategorija = kategorijaRepository.GetKategorijaByID(proizvodUpdateDTO.IDKategorija);
-                    KolekcijaEntity? kolekcija = kolekcijaRepository.GetKolekcijaByID(proizvodUpdateDTO.IDKolekcija);
                     InfoEntity? info = infoRepository.GetInfoByID(proizvodUpdateDTO.IDProizvodInfo);
                     VelicinaEntity? velicina = velicinaRepository.GetVelicinaByID(proizvodUpdateDTO.IDVelicina);
 
-                    if (proizvodjac == null || kategorija == null || kolekcija == null || info == null || velicina == null)
+                    if (info == null || velicina == null)
                         return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
                     else
                     {
@@ -185,9 +178,6 @@ namespace ERP_backend.Controllers
                         mapper.Map(proizvod, oldProizvod);
                         proizvodRepository.SaveChanges();
 
-                        proizvod.Proizvodjac = proizvodjac;
-                        proizvod.Kategorija = kategorija;
-                        proizvod.Kolekcija = kolekcija;
                         proizvod.Info = info;
                         proizvod.Velicina = velicina;
 

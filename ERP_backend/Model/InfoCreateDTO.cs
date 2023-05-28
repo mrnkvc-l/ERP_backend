@@ -13,5 +13,11 @@ namespace ERP_backend.Model
 
         [Required(ErrorMessage = "Cena je neophodna!")]
         public decimal Cena { get; set; }
+
+        public int IDKategorija { get; set; }
+
+        public int IDKolekcija { get; set; }
+
+        public int IDProizvodjac { get; set; }
     }
 }

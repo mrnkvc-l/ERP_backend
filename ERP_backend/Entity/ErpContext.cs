@@ -21,8 +21,6 @@ namespace ERP_backend.Entity
 
         public DbSet<ProizvodSkladisteEntity> ProizvodSkladista { get;set; }
 
-        public DbSet<ProizvodSlikaEntity> ProizvodSlike { get; set; }
-
         public DbSet<RacunEntity> Racuni { get; set; }
 
         public DbSet<SkladisteEntity> Skladista { get; set; }

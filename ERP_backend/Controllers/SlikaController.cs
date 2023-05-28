@@ -78,17 +78,10 @@ namespace ERP_backend.Controllers
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
                     List<SlikaEntity> slike = slikaRepository.GetAllSlike();
-                    if (slike.Find(e => e.Naziv == slikaCreateDTO.Naziv) == null)
-                    {
-                        SlikaDTO slikaDTO = slikaRepository.CreateSlika(slikaCreateDTO);
-                        slikaRepository.SaveChanges();
+                    SlikaDTO slikaDTO = slikaRepository.CreateSlika(slikaCreateDTO);
+                    slikaRepository.SaveChanges();
 
-                        return Ok("Uspesno kreirana slika!");
-                    }
-                    else
-                    {
-                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji slika sa istim nazivom!");
-                    }
+                    return Ok("Uspesno kreirana slika!");
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");

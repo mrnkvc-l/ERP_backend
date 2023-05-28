@@ -25,31 +25,11 @@ namespace ERP_backend.Entity
         public InfoEntity Info { get; set; } = null!;
 
         [Required]
-        [ForeignKey("Proizvodjac")]
-        public int IDProizvodjac { get; set; }
-
-        [Required]
-        public ProizvodjacEntity Proizvodjac { get; set; } = null!;
-
-        [Required]
         [ForeignKey("Velicina")]
         public int IDVelicina { get; set; }
 
         [Required]
         public VelicinaEntity Velicina { get; set; } = null!;
 
-        [Required]
-        [ForeignKey("Kategorija")]
-        public int IDKategorija { get; set; }
-
-        [Required]
-        public KategorijaEntity Kategorija { get; set; } = null!;
-
-        [Required]
-        [ForeignKey("Kolekcija")]
-        public int IDKolekcija { get; set; }
-
-        [Required]
-        public KolekcijaEntity Kolekcija { get; set; } = null!;
     }
 }

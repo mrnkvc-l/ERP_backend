@@ -13,16 +13,8 @@ namespace ERP_backend.Model
         [Required(ErrorMessage ="Proizvod je neophodan!")]
         public int IDProizvodInfo { get; set; }
 
-        [Required(ErrorMessage = "Proizvodjac je neophodan!")]
-        public int IDProizvodjac { get; set; }
-
         [Required(ErrorMessage = "Velicina je neophodna!")]
         public int IDVelicina { get; set; }
 
-        [Required(ErrorMessage ="Kategorija je neophodna!")]
-        public int IDKategorija { get; set; }
-
-        [Required(ErrorMessage = "Kolekcija je neophodna!")]
-        public int IDKolekcija { get; set; }
     }
 }

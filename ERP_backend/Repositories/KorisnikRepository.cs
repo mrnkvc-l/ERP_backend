@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ERP_backend.Entity;
 using ERP_backend.Model;
+using System.Security.Cryptography;
 
 namespace ERP_backend.Repositories
 {
@@ -16,9 +17,13 @@ namespace ERP_backend.Repositories
         }
         public KorisnikDTO CreateKorisnik(KorisnikCreateDTO korisnikCreateDTO)
         {
-            KorisnikEntity korisnik = mapper.Map<KorisnikEntity>(korisnikCreateDTO);
-            context.Add(korisnik);
-            return mapper.Map<KorisnikDTO>(korisnik);
+            Tuple<string, string> hashPassword = HashPassword(korisnikCreateDTO.Password);
+            KorisnikEntity user = mapper.Map<KorisnikEntity>(korisnikCreateDTO);
+            user.Password = hashPassword.Item1;
+            user.So = hashPassword.Item2;
+            user.TipKorisnika = "USER";
+            context.Add(user);
+            return mapper.Map<KorisnikDTO>(user);
         }
 
         public void DeleteKorisnik(int korisnikID)
@@ -42,5 +47,33 @@ namespace ERP_backend.Repositories
         {
             return context.SaveChanges() > 0;
         }
+
+        public KorisnikDTO UpdateKorisnik(KorisnikUpdateDTO korisnikUpdateDTO)
+        {
+            KorisnikEntity? oldUser = context.Korisnici.FirstOrDefault(e => e.IDKorisnik == korisnikUpdateDTO.IDKorisnik);
+            KorisnikEntity user = mapper.Map<KorisnikEntity>(korisnikUpdateDTO);
+            Tuple<string, string> hashPassword = HashPassword(korisnikUpdateDTO.Password);
+            user.Password = hashPassword.Item1;
+            user.So = hashPassword.Item2;
+            mapper.Map(user, oldUser);
+            return mapper.Map<KorisnikDTO>(user);
+
+        }
+
+        private static Tuple<string, string> HashPassword(string password)
+        {
+            var sBytes = new byte[password.Length];
+            RandomNumberGenerator.Create().GetNonZeroBytes(sBytes);
+            var salt = Convert.ToBase64String(sBytes);
+
+            var derivedBytes = new Rfc2898DeriveBytes(password, sBytes, 1000);
+
+            return new Tuple<string, string>
+            (
+                Convert.ToBase64String(derivedBytes.GetBytes(256)),
+                salt
+            );
+        }
+
     }
 }

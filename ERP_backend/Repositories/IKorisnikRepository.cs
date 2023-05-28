@@ -14,5 +14,6 @@ namespace ERP_backend.Repositories
         void DeleteKorisnik(int korisnikID);
 
         bool SaveChanges();
+        KorisnikDTO UpdateKorisnik(KorisnikUpdateDTO korisnikUpdateDTO);
     }
 }

@@ -9,5 +9,11 @@
         public string Opis { get; set; } = null!;
 
         public decimal Cena { get; set; }
+
+        public KategorijaDTO Kategorija { get; set; } = null!;
+
+        public KolekcijaDTO Kolekcija { get; set;} = null!;
+
+        public ProizvodjacDTO Proizvodjac { get; set;} = null!;
     }
 }

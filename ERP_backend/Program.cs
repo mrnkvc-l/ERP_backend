@@ -3,11 +3,13 @@ using ERP_backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var AllowCors = "_allowCors";
 
 // Add services to the container.
 
@@ -23,7 +25,6 @@ builder.Services.AddScoped<IKorisnikRepository, KorisnikRepository>();
 builder.Services.AddScoped<IProizvodjacRepository, ProizvodjacRepository>();
 builder.Services.AddScoped<IProizvodRepository, ProizvodRepository>();
 builder.Services.AddScoped<IProizvodSkladisteRepository, ProizvodSkladisteRepository>();
-builder.Services.AddScoped<IProizvodSlikaRepository, ProizvodSlikaRepository>();
 builder.Services.AddScoped<IRacunRepository, RacunRepository>();
 builder.Services.AddScoped<ISkladisteRepository, SkladisteRepository>();
 builder.Services.AddScoped<ISlikaRepository, SlikaRepository>();
@@ -35,6 +36,15 @@ builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<ErpContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("erp") + ";Initial Catalog=erp"));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowCors,
+        builder =>
+        {
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -112,6 +122,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = services.GetRequiredService<ErpContext>();
     dbContext.Database.EnsureCreated();
 }
+app.UseCors(AllowCors);
 
 app.UseHttpsRedirection();
 
@@ -120,5 +131,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Photos")),
+    RequestPath = "/Photos"
+});
 
 app.Run();

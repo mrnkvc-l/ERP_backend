@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace ERP_backend.Controllers
 {
@@ -84,9 +85,9 @@ namespace ERP_backend.Controllers
             try
             {
                 List<KorisnikEntity> korisnici = korisnikRepository.GetAllKorisnici();
-                if (korisnici.Find(e => e.Username == korisnikCreateDTO.Username) == null)
+                if (korisnici.Find(e => e.Username == korisnikCreateDTO.Username) == null &&
+                    korisnici.Find(e => e.Email == korisnikCreateDTO.Email) == null)
                 {
-                    korisnikCreateDTO.TipKorisnika = "USER";
 
                     KorisnikDTO korisnikDTO = korisnikRepository.CreateKorisnik(korisnikCreateDTO);
                     korisnikRepository.SaveChanges();
@@ -95,7 +96,7 @@ namespace ERP_backend.Controllers
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji korisnik sa istim username-om!");
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Vec postoji korisnik sa istim username-om ili emailom!");
                 }
             }
             catch (Exception ex)
@@ -129,5 +130,47 @@ namespace ERP_backend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        public ActionResult<KorisnikDTO> UpdateKorinsik(KorisnikUpdateDTO korisnikUpdateDTO)
+        {
+            try
+            {
+                
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == korisnikUpdateDTO.IDKorisnik.ToString())
+                {
+                    if (korisnikRepository.GetKorisnikByID(korisnikUpdateDTO.IDKorisnik) == null)
+                        return NotFound();
+
+                    List<KorisnikEntity> users = korisnikRepository.GetAllKorisnici();
+                    KorisnikEntity? tempUser = users.Find(e => e.IDKorisnik == korisnikUpdateDTO.IDKorisnik);
+
+                    if (tempUser != null)
+                        users.Remove(tempUser);
+
+                    if (users.Find(e => e.Username == korisnikUpdateDTO.Username) == null &&
+                        users.Find(e => e.Email == korisnikUpdateDTO.Email) == null)
+                    {
+                        KorisnikDTO usersDTO = korisnikRepository.UpdateKorisnik(korisnikUpdateDTO);
+                        korisnikRepository.SaveChanges();
+
+                        return Ok(usersDTO);
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Username or email already exists.");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+                }
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
     }
 }
