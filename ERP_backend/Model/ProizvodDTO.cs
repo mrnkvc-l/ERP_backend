@@ -4,8 +4,6 @@
     {
         public int IDProizvod { get; set; }
 
-        public Boolean Stanje { get; set; }
-
         public int UkupnaKolicina { get; set; }
 
         public InfoDTO ProizvodInfo { get; set; } = null!;

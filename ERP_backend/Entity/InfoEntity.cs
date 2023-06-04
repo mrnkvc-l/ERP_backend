@@ -16,6 +16,9 @@ namespace ERP_backend.Entity
         public string Opis { get; set; } = null!;
 
         [Required]
+        public Boolean Stanje { get; set; }
+
+        [Required]
         public decimal Cena { get; set; }
 
         [Required]

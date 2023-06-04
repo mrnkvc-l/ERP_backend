@@ -145,6 +145,7 @@ namespace ERP_backend.Controllers
                         return NotFound();
 
                     List<KorisnikEntity> users = korisnikRepository.GetAllKorisnici();
+
                     KorisnikEntity? tempUser = users.Find(e => e.IDKorisnik == korisnikUpdateDTO.IDKorisnik);
 
                     if (tempUser != null)

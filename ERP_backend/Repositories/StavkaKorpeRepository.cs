@@ -31,12 +31,12 @@ namespace ERP_backend.Repositories
 
         public List<StavkaKorpeEntity> GetAllStavkeKorpe(int userID)
         {
-            return context.StavkeKorpe.Where(o => o.Kupac == userID).ToList();
+            return context.StavkeKorpe.Where(o => o.IDKupac == userID).ToList();
         }
 
         public StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID, int userID)
         {
-            return context.StavkeKorpe.FirstOrDefault(e => e.Kupac == userID || e.Proizvod == stavkaKorpeID);
+            return context.StavkeKorpe.FirstOrDefault(e => e.IDKupac == userID || e.IDProizvod == stavkaKorpeID);
         }
 
         public bool SaveChanges()

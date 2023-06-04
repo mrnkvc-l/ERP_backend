@@ -10,8 +10,6 @@ namespace ERP_backend.Entity
         [Key]
         public int IDProizvod { get; set; }
 
-        [Required]
-        public Boolean Stanje { get; set; }
 
         [Required]
         public int UkupnaKolicina { get; set; }

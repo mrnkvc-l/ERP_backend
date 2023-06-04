@@ -38,6 +38,11 @@ namespace ERP_backend.Repositories
             return context.Proizvodi.FirstOrDefault(e => e.IDProizvod == proizvodID);
         }
 
+        public List<ProizvodEntity> GetProizvodByInfo(int infoID)
+        {
+            return context.Proizvodi.Where(o => o.IDProizvodInfo == infoID).ToList();
+        }
+
         public bool SaveChanges()
         {
             return context.SaveChanges() > 0;

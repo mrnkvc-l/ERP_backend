@@ -7,9 +7,6 @@ namespace ERP_backend.Model
         [Required(ErrorMessage = "ID je neophodan!")]
         public int IDProizvod { get; set; }
 
-        [Required(ErrorMessage = "Stanje je neophodno!")]
-        public Boolean Stanje { get; set; }
-
         [Required(ErrorMessage = "Ukupna kolicina je neophodna!")]
         public int UkupnaKolicina { get; set; }
 

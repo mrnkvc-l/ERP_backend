@@ -4,9 +4,6 @@ namespace ERP_backend.Model
 {
     public class ProizvodCreateDTO
     {
-        [Required(ErrorMessage ="Stanje je neophodno!")]
-        public Boolean Stanje { get; set; }
-
         [Required(ErrorMessage = "Ukupna kolicina je neophodna!")]
         public int UkupnaKolicina { get; set; }
 

@@ -7,6 +7,8 @@ namespace ERP_backend.Repositories
     {
         List<ProizvodEntity> GetAllProizvodi();
 
+        List<ProizvodEntity> GetProizvodByInfo(int infoID);
+
         ProizvodEntity? GetProizvodByID(int proizvodID);
 
         ProizvodDTO CreateProizvod(ProizvodCreateDTO proizvodCreateDTO);

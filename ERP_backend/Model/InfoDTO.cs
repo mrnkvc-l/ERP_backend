@@ -8,6 +8,10 @@
 
         public string Opis { get; set; } = null!;
 
+        public Boolean Stanje { get; set; }
+
+        public decimal Popust { get; set; }
+
         public decimal Cena { get; set; }
 
         public KategorijaDTO Kategorija { get; set; } = null!;

@@ -193,5 +193,38 @@ namespace ERP_backend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("info/{infoID}")]
+        public ActionResult<List<ProizvodDTO>> GetProizvodByInfo(int infoID)
+        {
+            try
+            {
+                List<ProizvodEntity> proizvodi = proizvodRepository.GetProizvodByInfo(infoID);
+                if (proizvodi == null || proizvodi.Count == 0)
+                    return NoContent();
+
+                List<ProizvodDTO> proizvodiDTO = new();
+
+                foreach (ProizvodEntity proizvod in proizvodi)
+                {
+                    ProizvodDTO proizvodDTO = mapper.Map<ProizvodDTO>(proizvod);
+
+                    proizvodDTO.ProizvodInfo = mapper.Map<InfoDTO>(infoRepository.GetInfoByID(proizvod.IDProizvodInfo));
+                    proizvodDTO.Velicina = mapper.Map<VelicinaDTO>(velicinaRepository.GetVelicinaByID(proizvod.IDVelicina));
+
+                    proizvodDTO.ProizvodInfo.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(proizvod.Info.IDProizvodjac));
+                    proizvodDTO.ProizvodInfo.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(proizvod.Info.IDKategorija));
+                    proizvodDTO.ProizvodInfo.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(proizvod.Info.IDKolekcija));
+
+                    proizvodiDTO.Add(proizvodDTO);
+                }
+                return Ok(proizvodiDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

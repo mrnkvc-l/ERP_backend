@@ -14,6 +14,10 @@ namespace ERP_backend.Model
         [MaxLength(300, ErrorMessage = "Duzina mora biti do 300 karaktera!")]
         public string Opis { get; set; } = null!;
 
+        public Boolean Stanje { get; set; }
+
+        public decimal Popust { get; set; }
+
         [Required(ErrorMessage = "Cena je neophodna!")]
         public decimal Cena { get; set; }
 

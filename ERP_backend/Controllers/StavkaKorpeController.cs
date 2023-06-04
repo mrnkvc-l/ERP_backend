@@ -8,36 +8,68 @@ using System.Security.Claims;
 
 namespace ERP_backend.Controllers
 {
+    [Authorize]
+    [ApiController]
+    [Route("api/stavke")]
+    [Produces("application/json", "application/xml")]
     public class StavkaKorpeController : ControllerBase
     {
         private readonly IStavkaKorpeRepository stavkaKorpeRepository;
         private readonly IKorisnikRepository korisnikRepository;
         private readonly IProizvodRepository proizvodRepository;
+        private readonly IInfoRepository infoRepository;
+        private readonly IVelicinaRepository velicinaRepository;
+        private readonly IKategorijaRepository kategorijaRepository;
+        private readonly IKolekcijaRepository kolekcijaRepository;
+        private readonly IProizvodjacRepository proizvodjacRepository;
         private LinkGenerator linkGenerator;
         private IMapper mapper;
 
-        public StavkaKorpeController(IProizvodRepository proizvodRepository, IStavkaKorpeRepository stavkaKorpeRepository, IKorisnikRepository korisnikRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public StavkaKorpeController(IInfoRepository infoRepository, IVelicinaRepository velicinaRepository, IKategorijaRepository kategorijaRepository, IKolekcijaRepository kolekcijaRepository, IProizvodjacRepository proizvodjacRepository, IProizvodRepository proizvodRepository, IStavkaKorpeRepository stavkaKorpeRepository, IKorisnikRepository korisnikRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
             this.stavkaKorpeRepository = stavkaKorpeRepository;
             this.proizvodRepository = proizvodRepository;
+            this.infoRepository = infoRepository;
+            this.kategorijaRepository = kategorijaRepository;
             this.korisnikRepository = korisnikRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
+            this.kolekcijaRepository = kolekcijaRepository;
+            this.velicinaRepository= velicinaRepository;
+            this.proizvodjacRepository= proizvodjacRepository;
         }
 
+        
         [HttpGet]
-        public ActionResult<List<StavkaKorpeDTO>> GetAllStavkaKorpe(int userID)
+        public ActionResult<List<StavkaKorpeDTO>> GetAllStavkaKorpe()
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == userID.ToString())
+                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+
+                if (korisnik != null)
                 {
-                    List<StavkaKorpeEntity> stavkeKorpe = stavkaKorpeRepository.GetAllStavkeKorpe(userID);
+                    List<StavkaKorpeEntity> stavkeKorpe = stavkaKorpeRepository.GetAllStavkeKorpe(korisnik.IDKorisnik);
 
                     if (stavkeKorpe == null || stavkeKorpe.Count == 0)
                         return NotFound();
 
-                    List<StavkaKorpeDTO> stavkeKorpeDTO = mapper.Map<List<StavkaKorpeDTO>>(stavkeKorpe);
+                    List<StavkaKorpeDTO> stavkeKorpeDTO = new();
+
+                    foreach(StavkaKorpeEntity stavka in stavkeKorpe)
+                    {
+                        StavkaKorpeDTO stavkaDTO = mapper.Map<StavkaKorpeDTO>(stavka);
+
+                        stavkaDTO.Kupac = mapper.Map<KorisnikDTO>(korisnik);
+                        stavkaDTO.Proizvod = mapper.Map<ProizvodDTO>(proizvodRepository.GetProizvodByID(stavka.IDProizvod));
+                        stavkaDTO.Proizvod.ProizvodInfo = mapper.Map<InfoDTO>(infoRepository.GetInfoByID(stavka.Proizvod.IDProizvodInfo));
+                        stavkaDTO.Proizvod.Velicina = mapper.Map<VelicinaDTO>(velicinaRepository.GetVelicinaByID(stavka.Proizvod.IDVelicina));
+                        stavkaDTO.Proizvod.ProizvodInfo.Proizvodjac = mapper.Map<ProizvodjacDTO>(proizvodjacRepository.GetProizvodjacByID(stavka.Proizvod.Info.IDProizvodjac));
+                        stavkaDTO.Proizvod.ProizvodInfo.Kategorija = mapper.Map<KategorijaDTO>(kategorijaRepository.GetKategorijaByID(stavka.Proizvod.Info.IDKategorija));
+                        stavkaDTO.Proizvod.ProizvodInfo.Kolekcija = mapper.Map<KolekcijaDTO>(kolekcijaRepository.GetKolekcijaByID(stavka.Proizvod.Info.IDKolekcija));
+
+                        stavkeKorpeDTO.Add(stavkaDTO);
+                    }
 
                     return Ok(stavkeKorpeDTO);
                 }
@@ -53,15 +85,15 @@ namespace ERP_backend.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<StavkaKorpeDTO> PostStavkaKorpe(StavkaKorpeCreateDTO stavkaKorpeCreateDTO)
+        public ActionResult<StavkaKorpeDTO> PostStavkaKorpe([FromBody]StavkaKorpeCreateDTO stavkaKorpeCreateDTO)
         {
             try
             {
-                stavkaKorpeCreateDTO.Kupac = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
+                stavkaKorpeCreateDTO.IDKupac = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
 
-                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaKorpeCreateDTO.Proizvod);
+                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaKorpeCreateDTO.IDProizvod);
 
-                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(stavkaKorpeCreateDTO.Kupac);
+                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(stavkaKorpeCreateDTO.IDKupac);
 
                 if (korisnik == null)
                     return StatusCode(StatusCodes.Status403Forbidden, "Morate se prijaviti.");
@@ -83,6 +115,35 @@ namespace ERP_backend.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("{stavkaId}")]
+        public IActionResult DeleteStavka(int stavkaId)
+        {
+            try
+            {
+
+                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+
+                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaId);
+
+                if (korisnik == null)
+                    return StatusCode(StatusCodes.Status409Conflict, "Doslo je do grekse.");
+
+                if (proizvod == null)
+                    return StatusCode(StatusCodes.Status404NotFound, "Nije pronadjen proizvod.");
+
+                stavkaKorpeRepository.DeleteStavkaKorpe(stavkaId, korisnik.IDKorisnik);
+                stavkaKorpeRepository.SaveChanges();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
     }
 }
