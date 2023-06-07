@@ -18,7 +18,7 @@ namespace ERP_backend.Entity
         public KorisnikEntity Kupac { get; set; } = null!;
 
         [Required]
-        public double UkupnaCena { get; set; }
+        public decimal UkupnaCena { get; set; }
 
         [Required]
         public DateTime Datum { get; set; }

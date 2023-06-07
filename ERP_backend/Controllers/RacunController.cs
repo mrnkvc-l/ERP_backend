@@ -38,12 +38,21 @@ namespace ERP_backend.Controllers
                 {
                     List<RacunEntity> racuni = racunRepository.GetAllRacuni();
 
-                if (racuni == null || racuni.Count == 0)
-                    return NoContent();
+                    if (racuni == null || racuni.Count == 0)
+                        return NoContent();
 
-                List<RacunDTO> racuniDTO = mapper.Map<List<RacunDTO>>(racuni);
+                    List<RacunDTO> racuniDTO = new();
 
-                return Ok(racuniDTO);
+                    foreach(RacunEntity racun in racuni)
+                    {
+                        RacunDTO racunDTO = mapper.Map<RacunDTO>(racun);
+
+                        racunDTO.Kupac = mapper.Map<KorisnikDTO>(korisnikRepository.GetKorisnikByID(racun.IDKupac));
+
+                        racuniDTO.Add(racunDTO);
+                    }
+
+                    return Ok(racuniDTO);
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
@@ -62,7 +71,7 @@ namespace ERP_backend.Controllers
                 RacunEntity? racun = racunRepository.GetRacunByID(racunID);
 
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
-                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == korisnikRepository.GetKorisnikByID(racun.IDKupac).ToString())
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == racun?.IDKupac.ToString())
                 {
                     if (racun == null)
                         return NoContent();
@@ -93,10 +102,18 @@ namespace ERP_backend.Controllers
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "USER" ||
                     HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    RacunDTO racunDTO = racunRepository.CreateRacun(racunCreateDTO);
-                    racunRepository.SaveChanges();
+                    KorisnikEntity? kupac = korisnikRepository.GetKorisnikByID(racunCreateDTO.IDKupac);
+                    if (kupac == null)
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
+                    else
+                    {
+                        RacunDTO racunDTO = racunRepository.CreateRacun(racunCreateDTO);
+                        racunRepository.SaveChanges();
 
-                    return Ok("Uspesno kreirana racun!");
+                        racunDTO.Kupac = mapper.Map<KorisnikDTO>(kupac);
+
+                        return Ok("Uspesno kreirana racun!");
+                    }
                 }
                 else
                     return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");

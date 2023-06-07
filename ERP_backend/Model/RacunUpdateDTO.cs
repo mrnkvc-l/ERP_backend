@@ -11,7 +11,7 @@ namespace ERP_backend.Model
         public int Kupac { get; set; }
 
         [Required(ErrorMessage = "Ukupna cena je neophodna!")]
-        public double UkupnaCena { get; set; }
+        public decimal UkupnaCena { get; set; }
 
         [Required(ErrorMessage = "Datum je neophodan!")]
         public DateTime Datum { get; set; }

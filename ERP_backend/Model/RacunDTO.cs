@@ -6,7 +6,7 @@
 
         public KorisnikDTO Kupac { get; set; } = null!;
 
-        public double UkupnaCena { get; set; }
+        public decimal UkupnaCena { get; set; }
 
         public DateTime Datum { get; set; }
     }

@@ -5,7 +5,7 @@ namespace ERP_backend.Model
     public class StavkaRacunaUpdateDTO
     {
         [Required(ErrorMessage = "Racun je neophodan!")]
-        public int Racun { get; set; }
+        public int IDRacun { get; set; }
 
         [Required(ErrorMessage = "ID stavke je neophodan!")]
         public int IDStavkaRacuna { get; set; }
@@ -17,6 +17,8 @@ namespace ERP_backend.Model
         public int Kolicina { get; set; }
 
         [Required(ErrorMessage = "Ukupna cena je neophodna!")]
-        public double UkupnaCena { get; set; }
+        public decimal Cena { get; set; }
+
+        public decimal Popust { get; set; }
     }
 }

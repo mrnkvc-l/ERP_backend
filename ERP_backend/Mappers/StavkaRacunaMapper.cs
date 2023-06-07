@@ -9,7 +9,8 @@ namespace ERP_backend.Mappers
         public StavkaRacunaMapper()
         {
             CreateMap<StavkaRacunaEntity, StavkaRacunaDTO>();
-            CreateMap<StavkaRacunaCreateDTO, StavkaRacunaEntity>();
+            CreateMap<StavkaRacunaCreateDTO, StavkaRacunaEntity>()
+                .ForMember(dest => dest.IDStavkaRacuna, opt => opt.Ignore());
             CreateMap<StavkaRacunaUpdateDTO, StavkaRacunaEntity>();
             CreateMap<StavkaRacunaDTO, StavkaRacunaEntity>();
             CreateMap<StavkaRacunaEntity, StavkaRacunaEntity>();

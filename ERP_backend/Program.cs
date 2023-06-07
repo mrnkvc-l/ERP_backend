@@ -1,10 +1,13 @@
 using ERP_backend.Entity;
 using ERP_backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Stripe;
 using System.Reflection;
 using System.Text;
 
@@ -77,10 +80,10 @@ using (SqlConnection sqlConnection = new(builder.Configuration.GetConnectionStri
 
     if (CreateDB != null && CreateErp != null && InsertErp != null)
     {
-        CreateDB = File.ReadAllText(CreateDB);
-        CreateErp = File.ReadAllText(CreateErp);
-        InsertErp = File.ReadAllText(InsertErp);
-        DropErp = File.ReadAllText(DropErp);
+        CreateDB = System.IO.File.ReadAllText(CreateDB);
+        CreateErp = System.IO.File.ReadAllText(CreateErp);
+        InsertErp = System.IO.File.ReadAllText(InsertErp);
+        DropErp = System.IO.File.ReadAllText(DropErp);
     }
     else
         return;
@@ -114,6 +117,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+StripeConfiguration.ApiKey = "sk_test_51NFGyvEvevgtQ9r2Ya4VeIt83gMY7x5VGqNm8ixnOsVkIqOxFzug5snsYGHcxzeW6e82Xr57jBvSk0mFRtrkkL0l00QBiTMQqZ";
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -138,3 +143,46 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.Run();
+
+[Route("create-payment-intent")]
+[ApiController]
+public class PaymentIntentApiController : Controller
+{
+    [HttpPost]
+    public ActionResult Create(PaymentIntentCreateRequest request)
+    {
+        var paymentIntentService = new PaymentIntentService();
+        var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
+        {
+            Amount = CalculateOrderAmount(request.TotalAmount),
+            Currency = "eur",
+            PaymentMethodTypes = new List<string> { "card" },
+        });
+
+
+        return Json(new { clientSecret = paymentIntent.ClientSecret });
+    }
+
+    private int CalculateOrderAmount(int amount)
+    {
+
+        // Replace this constant with a calculation of the order's amount
+        // Calculate the order total on the server to prevent
+        // people from directly manipulating the amount on the client
+        return (amount*110)/100;
+    }
+
+    public class Item
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+    }
+
+    public class PaymentIntentCreateRequest
+    {
+        [JsonProperty("items")]
+        public Item[] Items { get; set; }
+        [JsonProperty("totalAmount")]
+        public int TotalAmount { get; set; }
+    }
+}

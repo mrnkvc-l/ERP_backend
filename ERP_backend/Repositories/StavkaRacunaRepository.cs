@@ -14,6 +14,7 @@ namespace ERP_backend.Repositories
             this.context = context;
             this.mapper = mapper;
         }
+
         public StavkaRacunaDTO CreateStavkaRacuna(StavkaRacunaCreateDTO stavkaRacunaCreateDTO)
         {
             StavkaRacunaEntity stavkaRacuna = mapper.Map<StavkaRacunaEntity>(stavkaRacunaCreateDTO);
@@ -30,12 +31,12 @@ namespace ERP_backend.Repositories
 
         public List<StavkaRacunaEntity> GetAllStavkeRacuna(int racunID)
         {
-            return context.StavkeRacuna.Where(o => o.Racun ==racunID).ToList();
+            return context.StavkeRacuna.Where(o => o.IDRacun == racunID).ToList();
         }
 
         public StavkaRacunaEntity? GetStavkaRacunaByID(int stavkaRacunaID, int racunID)
         {
-            return context.StavkeRacuna.FirstOrDefault(e => e.Racun == racunID || e.IDStavkaRacuna == stavkaRacunaID);
+            return context.StavkeRacuna.FirstOrDefault(e => e.IDRacun == racunID || e.IDStavkaRacuna == stavkaRacunaID);
         }
 
         public bool SaveChanges()

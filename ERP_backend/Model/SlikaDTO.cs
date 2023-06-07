@@ -4,12 +4,10 @@
     {
         public int IDSlika { get; set; }
 
-        public ProizvodDTO Proizvod { get; set; } = null!;
+        public InfoDTO Proizvod { get; set; } = null!;
 
         public string Adresa { get; set; } = null!;
 
         public string Naziv { get; set; } = null!;
-
-        public string Tip { get; set; } = null!;
     }
 }

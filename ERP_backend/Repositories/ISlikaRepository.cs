@@ -7,6 +7,8 @@ namespace ERP_backend.Repositories
     {
         List<SlikaEntity> GetAllSlike();
 
+        List<SlikaEntity> GetSlikeByProizvod(int proizvodId);
+
         SlikaEntity? GetSlikaByID(int slikaID);
 
         SlikaDTO CreateSlika(SlikaCreateDTO slikaCreateDTO);

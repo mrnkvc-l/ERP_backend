@@ -38,6 +38,11 @@ namespace ERP_backend.Repositories
             return context.Slike.FirstOrDefault(e => e.IDSlika == slikaID);
         }
 
+        public List<SlikaEntity> GetSlikeByProizvod(int IDProizvodInfo)
+        {
+            return context.Slike.Where(o => o.IDInfo== IDProizvodInfo).ToList();
+        }
+
         public bool SaveChanges()
         {
             return context.SaveChanges() > 0;

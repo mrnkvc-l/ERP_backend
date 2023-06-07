@@ -13,9 +13,9 @@ namespace ERP_backend.Entity
 
         public string Naziv { get; set; } = null!;
 
-        public string Tip { get; set; } = null!;
 
         [ForeignKey("Info")]
+        [Column("IDProizvodInfo")]
         public int IDInfo { get; set; }
 
         public InfoEntity Info { get; set; } = null!;

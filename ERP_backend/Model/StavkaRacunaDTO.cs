@@ -10,6 +10,8 @@
 
         public int Kolicina { get; set; }
 
-        public double UkupnaCena { get; set; }
+        public decimal Cena { get; set; }
+
+        public decimal Popust { get; set; }
     }
 }

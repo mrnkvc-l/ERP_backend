@@ -5,17 +5,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ERP_backend.Entity
 {
     [Table("stavkaRacuna")]
-    [PrimaryKey(nameof(Racun), nameof(IDStavkaRacuna))]
+    [PrimaryKey(nameof(IDRacun), nameof(IDStavkaRacuna))]
     public class StavkaRacunaEntity
     {
-        public int Racun { get; set; }
+        [ForeignKey("Racun")]
+        public int IDRacun { get; set; }
 
+        public RacunEntity Racun { get; set; } = null!;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IDStavkaRacuna { get; set; }
 
-        public int Proizvod { get; set; }
+        [ForeignKey("Proizvod")]
+        public int IDProizvod { get; set; }
+
+        public ProizvodEntity Proizvod { get; set; } = null!;
 
         public int Kolicina { get; set; }
 
-        public double UkupnaCena { get; set; }
+        public decimal Cena { get; set; }
+
+        public decimal Popust { get; set; }
     }
 }
