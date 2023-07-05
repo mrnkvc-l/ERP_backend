@@ -138,17 +138,22 @@ namespace ERP_backend.Controllers
                 if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "USER" ||
                     HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    KorisnikEntity? kupac = korisnikRepository.GetKorisnikByID(racunCreateDTO.IDKupac);
+                    KorisnikEntity? kupac = korisnikRepository.GetKorisnikByID(int.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
                     if (kupac == null)
                         return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
                     else
                     {
+                        racunCreateDTO.IDKupac = kupac.IDKorisnik;
                         RacunDTO racunDTO = racunRepository.CreateRacun(racunCreateDTO);
                         racunRepository.SaveChanges();
 
                         racunDTO.Kupac = mapper.Map<KorisnikDTO>(kupac);
 
-                        return Ok("Uspesno kreirana racun!");
+                        List<RacunEntity> racuni = racunRepository.GetAllRacuni();
+
+                        RacunDTO prikaz = mapper.Map<RacunDTO>(racuni.Find(e => e.UkupnaCena.Equals(racunDTO.UkupnaCena) && e.IDKupac.Equals(racunDTO.Kupac.IDKorisnik) && e.Datum.Equals(racunDTO.Datum)));
+
+                        return Ok(prikaz);
                     }
                 }
                 else

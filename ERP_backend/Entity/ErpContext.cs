@@ -35,6 +35,8 @@ namespace ERP_backend.Entity
         {
             modelBuilder.Entity<ProizvodEntity>()
                 .ToTable(tb => tb.HasTrigger("SomeTrigger"));
+            modelBuilder.Entity<StavkaRacunaEntity>()
+                .ToTable(tb => tb.HasTrigger("SomeTrigger"));
         }
     }
 }

@@ -173,7 +173,7 @@ public class PaymentIntentApiController : Controller
         // Calculate the order total on the server to prevent
         // people from directly manipulating the amount on the client
         //return items[0].TotalAmount;
-        return amount;
+        return amount*100/110;
     }
 
     public class Item
