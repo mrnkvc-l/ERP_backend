@@ -117,7 +117,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-StripeConfiguration.ApiKey = "sk_test_51NFGyvEvevgtQ9r2Ya4VeIt83gMY7x5VGqNm8ixnOsVkIqOxFzug5snsYGHcxzeW6e82Xr57jBvSk0mFRtrkkL0l00QBiTMQqZ";
 
 using (var scope = app.Services.CreateScope())
 {
@@ -144,6 +143,10 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.Run();
 
+
+//STRIPE
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 [Route("create-payment-intent")]
 [ApiController]
 public class PaymentIntentApiController : Controller
@@ -151,6 +154,7 @@ public class PaymentIntentApiController : Controller
     [HttpPost]
     public ActionResult Create(PaymentIntentCreateRequest request)
     {
+        StripeConfiguration.ApiKey = "sk_test_51NFGyvEvevgtQ9r2Ya4VeIt83gMY7x5VGqNm8ixnOsVkIqOxFzug5snsYGHcxzeW6e82Xr57jBvSk0mFRtrkkL0l00QBiTMQqZ";
         var paymentIntentService = new PaymentIntentService();
         var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
         {
@@ -159,23 +163,24 @@ public class PaymentIntentApiController : Controller
             PaymentMethodTypes = new List<string> { "card" },
         });
 
-
         return Json(new { clientSecret = paymentIntent.ClientSecret });
     }
-
     private int CalculateOrderAmount(int amount)
     {
-
+        if (amount < 1)
+            return 100;
         // Replace this constant with a calculation of the order's amount
         // Calculate the order total on the server to prevent
         // people from directly manipulating the amount on the client
-        return (amount*110)/100;
+        //return items[0].TotalAmount;
+        return amount;
     }
 
     public class Item
     {
         [JsonProperty("id")]
         public string Id { get; set; }
+
     }
 
     public class PaymentIntentCreateRequest

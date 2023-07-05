@@ -63,6 +63,42 @@ namespace ERP_backend.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("kupac/{kupacID}")]
+        public ActionResult<List<RacunDTO>> GetRacuniByKupac()
+        {
+            try
+            {
+                KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+                if (korisnik == null)
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+                else
+                {
+                    List<RacunEntity> racuni = racunRepository.GetRacunEntitiesByUser(korisnik.IDKorisnik);
+
+                    if (racuni == null || racuni.Count == 0)
+                        return NoContent();
+
+                    List<RacunDTO> racuniDTO = new();
+
+                    foreach (RacunEntity racun in racuni)
+                    {
+                        RacunDTO racunDTO = mapper.Map<RacunDTO>(racun);
+
+                        racunDTO.Kupac = mapper.Map<KorisnikDTO>(korisnikRepository.GetKorisnikByID(racun.IDKupac));
+
+                        racuniDTO.Add(racunDTO);
+                    }
+
+                    return Ok(racuniDTO);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{racunID}")]
         public ActionResult<RacunDTO> GetRacunByID(int racunID)
         {

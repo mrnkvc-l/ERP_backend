@@ -118,15 +118,14 @@ namespace ERP_backend.Controllers
         }
 
         [AllowAnonymous]
-        [HttpDelete("{stavkaId}")]
-        public IActionResult DeleteStavka(int stavkaId)
+        [HttpDelete("{proizvodID}")]
+        public IActionResult DeleteStavka(int proizvodID)
         {
             try
             {
 
                 KorisnikEntity? korisnik = korisnikRepository.GetKorisnikByID(Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
-
-                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaId);
+                ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(proizvodID);
 
                 if (korisnik == null)
                     return StatusCode(StatusCodes.Status409Conflict, "Doslo je do grekse.");
@@ -134,7 +133,7 @@ namespace ERP_backend.Controllers
                 if (proizvod == null)
                     return StatusCode(StatusCodes.Status404NotFound, "Nije pronadjen proizvod.");
 
-                stavkaKorpeRepository.DeleteStavkaKorpe(stavkaId, korisnik.IDKorisnik);
+                stavkaKorpeRepository.DeleteStavkaKorpe(proizvodID, korisnik.IDKorisnik);
                 stavkaKorpeRepository.SaveChanges();
 
                 return NoContent();

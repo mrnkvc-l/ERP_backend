@@ -16,6 +16,6 @@ namespace ERP_backend.Model
         [Required(ErrorMessage = "Ukupna cena je neophodna!")]
         public decimal Cena { get; set; }
 
-        public decimal Popust { get; set; }
+        public decimal Popust { get; set; } = 0;
     }
 }

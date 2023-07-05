@@ -22,9 +22,9 @@ namespace ERP_backend.Repositories
             return mapper.Map<StavkaKorpeDTO>(stavkaKorpe);
         }
 
-        public void DeleteStavkaKorpe(int stavkaKorpeID, int userID)
+        public void DeleteStavkaKorpe(int proizvodID, int userID)
         {
-            StavkaKorpeEntity? stavkaKorpe = GetStavkaKorpeByID(stavkaKorpeID, userID);
+            StavkaKorpeEntity? stavkaKorpe = GetStavkaKorpeByID(proizvodID, userID);
             if(stavkaKorpe != null)
                 context.Remove(stavkaKorpe);
         }
@@ -34,9 +34,9 @@ namespace ERP_backend.Repositories
             return context.StavkeKorpe.Where(o => o.IDKupac == userID).ToList();
         }
 
-        public StavkaKorpeEntity? GetStavkaKorpeByID(int stavkaKorpeID, int userID)
+        public StavkaKorpeEntity? GetStavkaKorpeByID(int proizvodID, int userID)
         {
-            return context.StavkeKorpe.FirstOrDefault(e => e.IDKupac == userID || e.IDProizvod == stavkaKorpeID);
+            return context.StavkeKorpe.FirstOrDefault(e => e.IDKupac == userID && e.IDProizvod == proizvodID);
         }
 
         public bool SaveChanges()

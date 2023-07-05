@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
+using System.Reflection.Metadata;
 
 namespace ERP_backend.Entity
 {
@@ -28,5 +29,12 @@ namespace ERP_backend.Entity
         public DbSet<StavkaRacunaEntity> StavkeRacuna { get;set; }
 
         public DbSet<VelicinaEntity> Velicine { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProizvodEntity>()
+                .ToTable(tb => tb.HasTrigger("SomeTrigger"));
+        }
     }
 }
