@@ -8,7 +8,7 @@ namespace ERP_backend.Model
         public int IDRacun { get; set; }
 
         [Required(ErrorMessage = "Kupac je neophodan!")]
-        public int Kupac { get; set; }
+        public int IDKupac { get; set; }
 
         [Required(ErrorMessage = "Ukupna cena je neophodna!")]
         public decimal UkupnaCena { get; set; }

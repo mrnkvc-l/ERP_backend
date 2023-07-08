@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IKategorijaRepository,KategorijaRepository>();
+builder.Services.AddScoped<IKategorijaRepository, KategorijaRepository>();
 builder.Services.AddScoped<IKolekcijaRepository, KolekcijaRepository>();
 builder.Services.AddScoped<IInfoRepository, InfoRepository>();
 builder.Services.AddScoped<IKorisnikRepository, KorisnikRepository>();
@@ -36,7 +36,8 @@ builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>(
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<ErpContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("erp") + ";Initial Catalog=erp"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("erp") + ";Initial Catalog=erp", 
+                                    providerOptions => providerOptions.EnableRetryOnFailure()));
 
 builder.Services.AddCors(options =>
 {
@@ -100,7 +101,7 @@ using (SqlConnection sqlConnection = new(builder.Configuration.GetConnectionStri
     sqlConnection.Close();
 }
 
-    var app = builder.Build();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -173,7 +174,7 @@ public class PaymentIntentApiController : Controller
         // Calculate the order total on the server to prevent
         // people from directly manipulating the amount on the client
         //return items[0].TotalAmount;
-        return amount*100/110;
+        return amount * 100 / 110;
     }
 
     public class Item

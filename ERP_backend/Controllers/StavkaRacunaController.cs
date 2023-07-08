@@ -145,7 +145,7 @@ namespace ERP_backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{stavkaID}/{racunID}")]
         public IActionResult DeleteStavka(int stavkaID, int racunID)
         {
             try
@@ -161,6 +161,45 @@ namespace ERP_backend.Controllers
                 return NoContent();
             }
             catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        public ActionResult<StavkaRacunaDTO> UpdateStavkaRacuna([FromBody] StavkaRacunaUpdateDTO stavkaRacunaUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    StavkaRacunaEntity? oldStavkaRacuna = stavkaRacunaRepository.GetStavkaRacunaByID(stavkaRacunaUpdateDTO.IDStavkaRacuna, stavkaRacunaUpdateDTO.IDRacun);
+                    if (oldStavkaRacuna == null)
+                        return NotFound();
+                    ProizvodEntity? proizvod = proizvodRepository.GetProizvodByID(stavkaRacunaUpdateDTO.IDProizvod);
+                    RacunEntity? racun = racunRepository.GetRacunByID(stavkaRacunaUpdateDTO.IDRacun);
+
+                    if (proizvod != null && racun != null)
+                    {
+                        StavkaRacunaEntity stavkaRacuna = mapper.Map<StavkaRacunaEntity>(stavkaRacunaUpdateDTO);
+                        mapper.Map(stavkaRacuna, oldStavkaRacuna);
+
+                        racunRepository.SaveChanges();
+
+                        stavkaRacuna.Racun = racun;
+                        stavkaRacuna.Proizvod = proizvod;
+
+                        return Ok(mapper.Map<StavkaRacunaDTO>(stavkaRacuna));
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
+
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }

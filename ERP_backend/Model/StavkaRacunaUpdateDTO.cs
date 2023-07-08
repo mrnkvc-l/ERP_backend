@@ -11,7 +11,7 @@ namespace ERP_backend.Model
         public int IDStavkaRacuna { get; set; }
 
         [Required(ErrorMessage = "Proizvod je neophodan!")]
-        public int Proizvod { get; set; }
+        public int IDProizvod { get; set; }
 
         [Required(ErrorMessage = "Kolicina je neophodna!")]
         public int Kolicina { get; set; }

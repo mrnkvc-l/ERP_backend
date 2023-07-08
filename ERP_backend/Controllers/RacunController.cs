@@ -189,5 +189,43 @@ namespace ERP_backend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        public ActionResult<RacunDTO> UpdateRacun([FromBody] RacunUpdateDTO racunUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    RacunEntity? oldRacun = racunRepository.GetRacunByID(racunUpdateDTO.IDRacun);
+                    if(oldRacun == null) 
+                        return NotFound();
+                    KorisnikEntity? kupac = korisnikRepository.GetKorisnikByID(int.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+
+                    if(kupac != null)
+                    {
+                        racunUpdateDTO.IDKupac = kupac.IDKorisnik;
+                        RacunEntity racun = mapper.Map<RacunEntity>(racunUpdateDTO);
+                        mapper.Map(racun, oldRacun);
+
+                        racunRepository.SaveChanges();
+
+                        racun.Kupac = kupac;
+
+                        return Ok(mapper.Map<RacunDTO>(racun));
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Neki od starnih kljuceva nedostaje!");
+
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
